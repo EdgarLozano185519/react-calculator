@@ -18,9 +18,39 @@ class Calculator extends React.Component {
   handleZero = () => {
     if(this.state.inputStr !== '0') this.setState({ inputStr: this.state.inputStr + '0' });
   }
+  quickNumberUpdate = (value) => {
+    if(this.state.inputStr === '0') {
+      this.setState((state) => ({
+        inputStr: value
+      }));
+    }
+    else {
+      this.setState((state) => ({
+        inputStr: state.inputStr + value
+      }));
+    }
+  }
+  handleKeyboard = e => {
+    if(e.key === '1') this.quickNumberUpdate('1')
+    else if(e.key === '2') this.quickNumberUpdate('2')
+    else if(e.key === '3') this.quickNumberUpdate('3')
+    else if(e.key === '4') this.quickNumberUpdate('4')
+    else if(e.key === '5') this.quickNumberUpdate('5')
+    else if(e.key === '6') this.quickNumberUpdate('6')
+    else if(e.key === '7') this.quickNumberUpdate('7')
+    else if(e.key === '8') this.quickNumberUpdate('8')
+    else if(e.key === '9') this.quickNumberUpdate('9')
+    else if(e.key === '0') {
+      if(this.state.inputStr !== '0') {
+        this.setState((state) => ({
+          inputStr: state.inputStr + '0'
+        }));
+      }
+    }
+  }
   render() {
     return (
-      <div>
+      <div onKeyDown={this.handleKeyboard}>
         <h2>Calculator</h2>
         <p>Buttons are grouped as numbers or operators. You can navigate to a button with the keyboard and press Enter to activate. The equals button will give you the result of your current calculation.</p>
         <h3>Numbers</h3>
@@ -47,7 +77,7 @@ class Calculator extends React.Component {
           <button onClick={this.handleClear} id="clear">Clear!</button>
         </div>
         <h3>Current Display</h3>
-        <div id="display">Display: {this.state.inputStr}</div>
+        <div aria-live="polite" id="display">Display: {this.state.inputStr}</div>
       </div>
     );
   }
