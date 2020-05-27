@@ -5,7 +5,8 @@ class Calculator extends React.Component {
     super(props);
     this.state = {
       inputStr: '0',
-      result: 0
+      result: 0,
+      decimal: false
     };
   }
   handleClear = () => {
@@ -48,6 +49,24 @@ class Calculator extends React.Component {
       }
     }
   }
+  handleOps = e => {
+    let lastChar = this.state.inputStr[this.state.inputStr.length-1];
+    let op = e.target.value;
+    if(lastChar !== op) {
+      this.setState((state) => {
+        inputStr: state.inputStr + op,
+        decimal: false
+      });
+    }
+  }
+  handleDecimal = () => {
+    if(!this.state.decimal) {
+      this.setState((state) => {
+        inputStr: state.inputStr + '.',
+        decimal: true
+      });
+    }
+  }
   render() {
     return (
       <div onKeyDown={this.handleKeyboard}>
@@ -68,11 +87,11 @@ class Calculator extends React.Component {
         </div>
         <h3>Operators</h3>
         <div id="operators">
-          <button value="+" onClick={this.handleClick} id="add">plus (+)</button>
-          <button value="-" onClick={this.handleClick} id="subtract">minus (-)</button>
-          <button value="*" onClick={this.handleClick} id="multiply">times (*)</button>
-          <button value="/" onClick={this.handleClick} id="divide">divided by (/)</button>
-          <button id="decimal">Decimal point (.)</button>
+          <button value="+" onClick={this.handleOps} id="add">plus (+)</button>
+          <button value="-" onClick={this.handleOps} id="subtract">minus (-)</button>
+          <button value="*" onClick={this.handleOps} id="multiply">times (*)</button>
+          <button value="/" onClick={this.handleOps} id="divide">divided by (/)</button>
+          <button onClick={this.handleDecimal} id="decimal">Decimal point (.)</button>
           <button id="equals">equals (=)</button>
           <button onClick={this.handleClear} id="clear">Clear!</button>
         </div>
