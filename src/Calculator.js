@@ -1,4 +1,5 @@
 import React from 'react';
+import getCalculation from './calculatorFunctions';
 
 class Calculator extends React.Component {
   constructor(props) {
@@ -10,24 +11,44 @@ class Calculator extends React.Component {
     };
   }
   handleClear = () => {
-    this.setState({ inputStr: '0'});
+    this.setState((state) => ({
+      inputStr: '0',
+      result: 0
+    }));
   }
   handleClick = (e) => {
-    if(this.state.inputStr === '0') this.setState({ inputStr: e.target.value });
-    else this.setState({ inputStr: this.state.inputStr + e.target.value});
-  }
-  handleZero = () => {
-    if(this.state.inputStr !== '0') this.setState({ inputStr: this.state.inputStr + '0' });
-  }
-  quickNumberUpdate = (value) => {
     if(this.state.inputStr === '0') {
-      this.setState((state) => ({
-        inputStr: value
+      this.setState(() => ({
+        inputStr: e.target.value,
+        result: 0
       }));
     }
     else {
       this.setState((state) => ({
-        inputStr: state.inputStr + value
+        inputStr: state.inputStr + e.target.value,
+        result: 0
+      }));
+    }
+  }
+  handleZero = () => {
+    if(this.state.inputStr !== '0') {
+      this.setState((state) => ({
+        inputStr: state.inputStr + '0',
+        result: 0
+      }));
+    }
+  }
+  quickNumberUpdate = (value) => {
+    if(this.state.inputStr === '0') {
+      this.setState((state) => ({
+        inputStr: value,
+        result: 0
+      }));
+    }
+    else {
+      this.setState((state) => ({
+        inputStr: state.inputStr + value,
+        result: 0
       }));
     }
   }
@@ -44,7 +65,8 @@ class Calculator extends React.Component {
     else if(e.key === '0') {
       if(this.state.inputStr !== '0') {
         this.setState((state) => ({
-          inputStr: state.inputStr + '0'
+          inputStr: state.inputStr + '0',
+          result: 0
         }));
       }
     }
@@ -52,20 +74,26 @@ class Calculator extends React.Component {
   handleOps = e => {
     let lastChar = this.state.inputStr[this.state.inputStr.length-1];
     let op = e.target.value;
-    if(lastChar !== op) {
-      this.setState((state) => {
+    if(!lastChar.match(/[\*\-\/\+]/)) {
+      this.setState((state) => ({
         inputStr: state.inputStr + op,
         decimal: false
-      });
+      }));
     }
   }
   handleDecimal = () => {
     if(!this.state.decimal) {
-      this.setState((state) => {
+      this.setState((state) => ({
         inputStr: state.inputStr + '.',
         decimal: true
-      });
+      }));
     }
+  }
+  handleEquals = () => {
+    this.setState((state) => ({
+      result: getCalculation(state.inputStr),
+      inputStr: '0'
+    }));
   }
   render() {
     return (
@@ -92,11 +120,13 @@ class Calculator extends React.Component {
           <button value="*" onClick={this.handleOps} id="multiply">times (*)</button>
           <button value="/" onClick={this.handleOps} id="divide">divided by (/)</button>
           <button onClick={this.handleDecimal} id="decimal">Decimal point (.)</button>
-          <button id="equals">equals (=)</button>
+          <button id="equals" onClick={this.handleEquals}>equals (=)</button>
           <button onClick={this.handleClear} id="clear">Clear!</button>
         </div>
         <h3>Current Display</h3>
-        <div aria-live="polite" id="display">Display: {this.state.inputStr}</div>
+        <div aria-live="polite" id="display">
+          Display: { this.state.result ? this.state.result : this.state.inputStr }
+        </div>
       </div>
     );
   }
