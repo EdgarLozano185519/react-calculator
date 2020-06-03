@@ -32,8 +32,8 @@ function reversePolishNotation(tokens) {
       stack.push(token);
     }
   }
-  for(let element of stack) {
-    queue.push(element);
+  while(stack.length) {
+    queue.push(stack.pop());
   }
   return queue;
 }

@@ -17,15 +17,16 @@ class Calculator extends React.Component {
     }));
   }
   handleClick = (e) => {
+    let val = e.target.value;
     if(this.state.inputStr === '0') {
-      this.setState(() => ({
-        inputStr: e.target.value,
+      this.setState((state) => ({
+        inputStr: val,
         result: 0
       }));
     }
     else {
       this.setState((state) => ({
-        inputStr: state.inputStr + e.target.value,
+        inputStr: state.inputStr + val,
         result: 0
       }));
     }
