@@ -1,8 +1,12 @@
 function tokenize(str) {
   let tokens = [];
   let currentString = '';
-  for(let currentChar of str) {
-    if(!currentChar.match(/[\*\+\/\-]/)) currentString += currentChar;
+  for(let index = 0; index < str.length; index++) {
+    let lastChar = '1';
+    if(index>0) lastChar = str[index-1];
+    let currentChar = str[index];
+    if(currentChar==='-' && lastChar.match(/[-+*/]/)) currentString += '-';
+    else if(!currentChar.match(/[*+/-]/)) currentString += currentChar;
     else {
       tokens.push(currentString);
       tokens.push(currentChar);

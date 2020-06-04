@@ -71,30 +71,52 @@ class Calculator extends React.Component {
         }));
       }
     }
+    else if(e.key === '=') this.handleEquals();
   }
   handleOps = e => {
     let lastChar = this.state.inputStr[this.state.inputStr.length-1];
     let op = e.target.value;
-    if(!lastChar.match(/[\*\-\/\+]/)) {
+    if(!lastChar.match(/[-*/+]/)) {
       this.setState((state) => ({
         inputStr: state.inputStr + op,
+        result: 0,
         decimal: false
       }));
     }
+    else if(lastChar.match(/[+*/-]/) && op.match(/[+*/]/)) {
+      this.setState((state) => ({
+        inputStr: state.inputStr.splice(-1, 1, op),
+        decimal: false,
+        result: 0
+      }));
+    }
+    else {
+      const secondLast = this.state.inputStr[this.state.inputStr.length-2];
+      if(!secondLast.match(/[0-9]/) && op==='-') {
+        this.setState((state) => ({
+          inputStr: state.inputStr + '-'
+        }));
+      }
+    }
   }
   handleDecimal = () => {
-    if(!this.state.decimal) {
+    const lastChar = this.state.inputStr[this.state.inputStr.length-1];
+    if(!this.state.decimal && lastChar.match(/[0-9]/)) {
       this.setState((state) => ({
         inputStr: state.inputStr + '.',
-        decimal: true
+        decimal: true,
+        result: 0
       }));
     }
   }
   handleEquals = () => {
-    this.setState((state) => ({
-      result: getCalculation(state.inputStr),
-      inputStr: '0'
-    }));
+    const lastChar = this.state.inputStr[this.state.inputStr.length-1];
+    if(lastChar.match(/[0-9]/)) {
+      this.setState((state) => ({
+        result: getCalculation(state.inputStr),
+        inputStr: '0'
+      }));
+    }
   }
   render() {
     return (
@@ -125,7 +147,7 @@ class Calculator extends React.Component {
           <button onClick={this.handleClear} id="clear">Clear!</button>
         </div>
         <h3>Current Display</h3>
-        <div aria-live="polite" id="display">
+        <div aria-live="assertive" id="display">
           Display: { this.state.result ? this.state.result : this.state.inputStr }
         </div>
       </div>
