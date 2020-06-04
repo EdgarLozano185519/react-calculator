@@ -13,7 +13,8 @@ class Calculator extends React.Component {
   handleClear = () => {
     this.setState((state) => ({
       inputStr: '0',
-      result: 0
+      result: 0,
+      decimal: false
     }));
   }
   handleClick = (e) => {
@@ -72,10 +73,15 @@ class Calculator extends React.Component {
       }
     }
     else if(e.key === '=') this.handleEquals();
+    else if(e.key === '.') this.handleDecimal()
+    else if(e.key === '+') this.handleOps('+')
+    else if(e.key === '-') this.handleOps('-')
+    else if(e.key === '*') this.handleOps('*')
+    else if(e.key === '/') this.handleOps('/')
   }
   handleOps = e => {
     let lastChar = this.state.inputStr[this.state.inputStr.length-1];
-    let op = e.target.value;
+    let op = typeof e === "string" ? e : e.target.value;
     if(!lastChar.match(/[-*/+]/)) {
       this.setState((state) => ({
         inputStr: state.inputStr + op,
@@ -83,18 +89,20 @@ class Calculator extends React.Component {
         decimal: false
       }));
     }
-    else if(lastChar.match(/[+*/-]/) && op.match(/[+*/]/)) {
+    else if(lastChar.match(/[+*/-]/) && op.match(/[+*/]/) && this.state.inputStr[this.state.inputStr.length-2].match(/[0-9]/)) {
       this.setState((state) => ({
-        inputStr: state.inputStr.splice(-1, 1, op),
+        inputStr: state.inputStr.slice(0, state.inputStr.length-1)+op,
         decimal: false,
         result: 0
       }));
     }
     else {
       const secondLast = this.state.inputStr[this.state.inputStr.length-2];
-      if(!secondLast.match(/[0-9]/) && op==='-') {
+      if(secondLast.match(/[0-9]+/) && op=='-') {
         this.setState((state) => ({
-          inputStr: state.inputStr + '-'
+          inputStr: state.inputStr + '-',
+          decimal: false,
+          result: 0
         }));
       }
     }
@@ -117,6 +125,9 @@ class Calculator extends React.Component {
         inputStr: '0'
       }));
     }
+      this.setState((state) => ({
+        inputStr: '' + state.result
+      }));
   }
   render() {
     return (
@@ -142,13 +153,13 @@ class Calculator extends React.Component {
           <button value="-" onClick={this.handleOps} id="subtract">minus (-)</button>
           <button value="*" onClick={this.handleOps} id="multiply">times (*)</button>
           <button value="/" onClick={this.handleOps} id="divide">divided by (/)</button>
-          <button onClick={this.handleDecimal} id="decimal">Decimal point (.)</button>
-          <button id="equals" onClick={this.handleEquals}>equals (=)</button>
+          <button onClick={this.handleDecimal} id="decimal">.</button>
+          <button id="equals" onClick={this.handleEquals}>=</button>
           <button onClick={this.handleClear} id="clear">Clear!</button>
         </div>
         <h3>Current Display</h3>
         <div aria-live="assertive" id="display">
-          Display: { this.state.result ? this.state.result : this.state.inputStr }
+          { this.state.result ? this.state.result : this.state.inputStr }
         </div>
       </div>
     );
