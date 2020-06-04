@@ -98,12 +98,20 @@ class Calculator extends React.Component {
     }
     else {
       const secondLast = this.state.inputStr[this.state.inputStr.length-2];
-      if(secondLast.match(/[0-9]+/) && op=='-') {
+      if(secondLast.match(/[0-9]/) && op==='-') {
         this.setState((state) => ({
           inputStr: state.inputStr + '-',
           decimal: false,
           result: 0
         }));
+      }
+      else {
+        this.setState((state) => ({
+          inputStr: state.inputStr.slice(0, state.inputStr.length-2) + op,
+          decimal: false,
+          result: 0
+        }));
+        
       }
     }
   }
